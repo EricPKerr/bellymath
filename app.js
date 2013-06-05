@@ -1,7 +1,8 @@
 var express = require('express');
 
-var app = express()
-var server = app.listen(8080);
+var app = express();
+var port = 8080;
+var server = app.listen(port);
 var io = require('socket.io').listen(server);
 
 // Public assets
@@ -9,18 +10,16 @@ app.use("/styles", express.static(__dirname + '/public/styles'));
 app.use("/scripts", express.static(__dirname + '/public/scripts'));
 app.use("/images", express.static(__dirname + '/public/images'));
 
+// Static app
 app.get('/', function(req, res){
   res.sendfile(__dirname + '/public/index.html');
 });
 
-// Prioritize sockets over xhr
-io.configure(function(){
-  io.set('transports', ['websocket', 'xhr-polling']);
-});
+// Minimal Logging
+io.set('log level', 2);
 
-io.configure('production', function(){
-  io.set('log level', 1);
-});
+// Prioritize sockets over xhr
+io.set('transports', [ 'websocket', 'xhr-polling' ]);
 
 io.sockets.on('connection', function(socket){
   socket.on('join', function(channel, ack) {
@@ -48,4 +47,6 @@ io.sockets.on('connection', function(socket){
     });
   });
 });
+
+console.log('Server is running on port %d...', port);
 
