@@ -40,8 +40,8 @@ var Room = function(name, sign, calculate){
   }
   
   function generate(){
-    problem.a = rand(-5, 15);
-    problem.b = rand(-5, 15);
+    problem.a = rand(-10, 15);
+    problem.b = rand(-10, 15);
     problem.answer = calculate(problem.a, problem.b);
   }
   generate();
@@ -110,10 +110,7 @@ var rooms = {
   })
 }
 
-
-
 io.sockets.on('connection', function(socket){
-  
   function broadcast(room){
     socket.broadcast.to(room).emit('state', rooms[room].toJSON());
   }
@@ -124,12 +121,10 @@ io.sockets.on('connection', function(socket){
   
   socket.on('name', function(name, next){
     socket.set('name', name, function(){
-      socket.get('room', function(err, room){
-        rooms[room].renameMember(socket.id, name);
-        broadcast(room);
-        emit(room);
-        if(next) next();
-      });
+      rooms[room].renameMember(socket.id, name);
+      broadcast(room);
+      emit(room);
+      if(next) next();
     });
   });
   
@@ -139,6 +134,10 @@ io.sockets.on('connection', function(socket){
       return;
     }
     socket.get('room', function(err, previous){
+      if(err){
+        socket.emit('error', err);
+        return;
+      }
       var member;
       if(previous){
         socket.leave(previous);
