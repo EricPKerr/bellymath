@@ -21,25 +21,28 @@ io.set('log level', 2);
 // Prioritize sockets over xhr
 io.set('transports', [ 'websocket', 'xhr-polling' ]);
 
+function rand(from, to){
+  return Math.floor(Math.random() * (to - from + 1) + from);
+}
+
+var member_autoinc = 0;
+
 var Member = function(id){
   this.id = id;
-  this.name = "";
+  this.name = "User: " + (++member_autoinc);
   this.score = 0;
 }
 
-var Room = function(name, calculate){
+var Room = function(name, sign, calculate){
   var members = {}; // keyed list of Member objects (socket.id -> Member)
-  var problem = {} // object with a, b, answer properties
-  
-  function rand(from, to){
-    return Math.floor(Math.random() * (to - from + 1) + from);
+  var problem = {
+    sign: sign
   }
   
   function generate(){
     problem.a = rand(-5, 15);
     problem.b = rand(-5, 15);
     problem.answer = calculate(problem.a, problem.b);
-    console.log(name, problem);
   }
   generate();
   
@@ -52,8 +55,8 @@ var Room = function(name, calculate){
   }
   
   function addMember(member){
-    members[member.id] = member;
     member.score = 0;
+    members[member.id] = member;
   }
   
   function removeMember(member_id){
@@ -66,6 +69,15 @@ var Room = function(name, calculate){
     return __.sortBy(members, function(member){
       return -1 * member.score;
     });
+  }
+  
+  function checkAnswer(member_id, answer){
+    if(answer == problem.answer){
+      members[member_id].score++;
+      generate();
+      return true;
+    }
+    return false;
   }
   
   function toJSON(){
@@ -81,18 +93,19 @@ var Room = function(name, calculate){
     addMember: addMember,
     removeMember: removeMember,
     renameMember: renameMember,
+    checkAnswer: checkAnswer,
     toJSON: toJSON
   }
 };
 
 var rooms = {
-  addition: new Room('Addition', function(a, b){
+  addition: new Room('Addition', '+', function(a, b){
     return a + b;
   }),
-  subtraction: new Room('Subtraction', function(a, b){
+  subtraction: new Room('Subtraction', '-', function(a, b){
     return a - b;
   }),
-  multiplication: new Room('Multiplication', function(a, b){
+  multiplication: new Room('Multiplication', '*', function(a, b){
     return a * b;
   })
 }
@@ -109,18 +122,18 @@ io.sockets.on('connection', function(socket){
     socket.emit('state', rooms[room].toJSON());
   }
   
-  socket.on('name', function(name, ack){
+  socket.on('name', function(name, next){
     socket.set('name', name, function(){
       socket.get('room', function(err, room){
         rooms[room].renameMember(socket.id, name);
         broadcast(room);
         emit(room);
-        //ack();
+        if(next) next();
       });
     });
   });
   
-  socket.on('join', function(room, ack){
+  socket.on('join', function(room, next){
     if(!(room in rooms)){
       socket.emit('error', 'Invald Room');
       return;
@@ -138,28 +151,37 @@ io.sockets.on('connection', function(socket){
         socket.join(room);
         rooms[room].addMember(member);
         emit(room); // Update our current socket
-        ack();
+        broadcast(room); // Tell everyone else we joined
+        if(next) next();
       });
     });
   });
   
   socket.on('disconnect', function(){
     socket.get('room', function(err, room){
-      if(!room) return; // No room to broadcast to
-      rooms[room].removeMember(socket.id);
-      broadcast(room); // Tell everyone else we left
+      if(err){
+        socket.emit('error', err);
+      } else if(!room){
+        socket.emit('error', 'No Room');
+      } else {
+        rooms[room].removeMember(socket.id);
+        broadcast(room); // Tell everyone else we left
+      }
     });
   });
   
-  socket.on('message', function(msg, ack) {
-    socket.get('room', function(err, room) {
+  socket.on('answer', function(answer, correct){
+    socket.get('room', function(err, room){
       if(err){
         socket.emit('error', err);
-      }else if(room){
-        socket.broadcast.to(room).emit('broadcast', msg);
-        ack();
-      }else{
+      } else if(!room){
         socket.emit('error', 'No Room');
+      } else if(!rooms[room].checkAnswer(socket.id, answer)){
+        correct(false);
+      } else {
+        broadcast(room);
+        emit(room);
+        correct(true);
       }
     });
   });

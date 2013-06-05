@@ -7,9 +7,7 @@ var addMessage = function(msg) {
 $(function(){
   $('.rooms a').click(function(){
     var room = $(this).attr('id');
-    socket.emit('join', room, function(){
-      alert('Joined: ' + room);
-    });
+    socket.emit('join', room);
   });
   
   $('.rooms a:eq(0)').trigger('click');
@@ -19,11 +17,24 @@ $(function(){
     socket.emit('name', name);
   });
   
+  $('#guess').click(function(){
+    var answer = $('#answer').val();
+    socket.emit('answer', answer, function(correct){
+      console.log('CORRECT', correct);
+    });
+  });
+  
   socket.on('error', function(err){
-    addMessage('error: ' + err);
+    alert('error: ' + err);
   });
   
   socket.on('state', function(state){
     console.log(state);
+    $('#problem').text(state.problem.a + ' ' + state.problem.sign + ' ' + state.problem.b);
+    $('#leaderboard').empty();
+    $(state.leaderboard).each(function(i, member){
+      console.log(member.name + ' ' + member.score);
+      $('#leaderboard').append('<li>' + member.name + ' ' + member.score + '</li>');
+    });
   });
 });
