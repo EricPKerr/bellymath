@@ -148,6 +148,9 @@ input {
 #leaderboard li .score {
   float: right;
 }
+#leaderboard li.you {
+  border-left: 5px solid #222;
+}
 .notifyjs-corner div {
   width: 120px;
 }
