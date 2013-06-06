@@ -17,6 +17,8 @@ html {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#020031', endColorstr='#6d3353',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
+@backing: rgba(0,0,0,.7);
+
 body, input {
   font-family: 'Open Sans', sans-serif;
 }
@@ -38,8 +40,7 @@ body, input {
     
     &.current {
       .top-border-radius(8px);
-      
-      background: #000;
+      background: @backing;
     }
   }
 }
@@ -54,7 +55,7 @@ body, input {
 }
 
 .problem {
-  background: #000;
+  background: @backing;
   height: 300px;
   width: 700px;
   
@@ -121,7 +122,7 @@ body, input {
 }
 
 #leaderboard {
-  background: #000;
+  background: @backing;
   height: 300px;
   overflow-y: auto;
   
@@ -129,14 +130,14 @@ body, input {
     padding: 0 8px;
     height: 38px;
     line-height: 38px;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
     
     .score {
       float: right;
     }
     
     &.you {
-      border-left: 5px solid #222;
+      border-left: 5px solid rgba(255, 255, 255, .1);
     }
   }
 }
