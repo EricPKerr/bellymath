@@ -24,7 +24,7 @@ $(function(){
     var answer = $('#answer input').val();
     if(answer.length == 0) return false;
     var current = previous_problem;
-    socket.emit('answer', answer, function(correct){
+    socket.emit('answer', current.id, answer, function(correct){
       $.notify(current.a + ' ' + current.sign + ' ' + current.b + (correct ? ' = ' : " isn't ") + answer, {
         style: correct ? 'correct' : 'incorrect',
         autoHideDelay: 4000,

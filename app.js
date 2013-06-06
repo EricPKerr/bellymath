@@ -42,6 +42,7 @@ var Room = function(name, sign, calculate){
   function generate(){
     problem.a = rand(-10, 15);
     problem.b = rand(-10, 15);
+    problem.id = rand(0, 999999999);
     problem.answer = calculate(problem.a, problem.b);
   }
   generate();
@@ -71,7 +72,9 @@ var Room = function(name, sign, calculate){
     });
   }
   
-  function checkAnswer(member_id, answer){
+  function checkAnswer(member_id, problem_id, answer){
+    if(problem_id != problem.id) return false;
+    
     if(answer == problem.answer){
       members[member_id].score++;
       generate();
@@ -177,7 +180,7 @@ io.sockets.on('connection', function(socket){
     });
   });
   
-  socket.on('answer', function(answer, correct){
+  socket.on('answer', function(problem_id, answer, correct){
     socket.get('room', function(err, room){
       if(err){
         socket.emit('error', err);
@@ -185,7 +188,7 @@ io.sockets.on('connection', function(socket){
         socket.emit('error', 'No Room');
       } else {
         // Check answer, update member, and call client fn
-        correct(rooms[room].checkAnswer(socket.id, answer));
+        correct(rooms[room].checkAnswer(socket.id, problem_id, answer));
         
         broadcast(room);
         emit(room);
