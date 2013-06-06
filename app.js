@@ -124,8 +124,8 @@ io.sockets.on('connection', function(socket){
   }
   
   socket.on('name', function(name, next){
-    if(name.length == 0){
-      socket.emit('error', 'Invalid Username!');
+    if(name.length == 0 || name.length > 14){
+      socket.emit('error', 'Username too ' + (name.length == 0 ? 'short' : 'long') + '!');
       return;
     }
     socket.set('name', name, function(){
