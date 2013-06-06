@@ -137,6 +137,7 @@ input {
 #leaderboard {
   background: #000;
   height: 300px;
+  overflow-y: auto;
 }
 #leaderboard li {
   padding: 0 8px;
