@@ -10,7 +10,9 @@
     "express": "3.x",
     "socket.io": ">=0.9.6",
     "socket.io-client": ">=0.9.6",
-    "underscore": "1.4.x"
+    "underscore": "1.4.x",
+    "mocha": ">=1.10.0",
+    "should": ">=1.2.2"
   },
   "engines": {
     "node": "0.8.x"
