@@ -140,7 +140,7 @@ io.sockets.on('connection', function(socket){
   
   socket.on('join', function(room, next){
     if(!(room in rooms)){
-      socket.emit('error', 'Invald Room');
+      socket.emit('error', 'Invalid Room');
       return;
     }
     socket.get('room', function(err, previous){
