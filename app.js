@@ -77,6 +77,7 @@ var Room = function(name, sign, calculate){
       generate();
       return true;
     }
+    members[member_id].score--;
     return false;
   }
   
@@ -105,7 +106,7 @@ var rooms = {
   subtraction: new Room('Subtraction', '-', function(a, b){
     return a - b;
   }),
-  multiplication: new Room('Multiplication', '*', function(a, b){
+  multiplication: new Room('Multiplication', 'x', function(a, b){
     return a * b;
   })
 }
@@ -120,11 +121,17 @@ io.sockets.on('connection', function(socket){
   }
   
   socket.on('name', function(name, next){
+    if(name.length == 0){
+      socket.emit('error', 'Invalid Username!');
+      return;
+    }
     socket.set('name', name, function(){
-      rooms[room].renameMember(socket.id, name);
-      broadcast(room);
-      emit(room);
-      if(next) next();
+      socket.get('room', function(err, room){
+        rooms[room].renameMember(socket.id, name);
+        broadcast(room);
+        emit(room);
+        if(next) next();
+      });
     });
   });
   
@@ -146,6 +153,7 @@ io.sockets.on('connection', function(socket){
       } else {
         member = new Member(socket.id);
       }
+      socket.emit('identify', member.name);
       socket.set('room', room, function(){
         socket.join(room);
         rooms[room].addMember(member);
@@ -175,12 +183,12 @@ io.sockets.on('connection', function(socket){
         socket.emit('error', err);
       } else if(!room){
         socket.emit('error', 'No Room');
-      } else if(!rooms[room].checkAnswer(socket.id, answer)){
-        correct(false);
       } else {
+        // Check answer, update member, and call client fn
+        correct(rooms[room].checkAnswer(socket.id, answer));
+        
         broadcast(room);
         emit(room);
-        correct(true);
       }
     });
   });

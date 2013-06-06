@@ -3,26 +3,45 @@
 <head>
   <title>Eric Kerr's Belly Math Race</title>
   <meta charset="utf-8">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="/styles/app.css" />
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/scripts/jquery.cookie.js"></script>
   <script src="/scripts/underscore.js"></script>
+  <script src="/scripts/notify.min.js"></script>
   <script src="/scripts/client.js"></script>
 </head>
 <body>
-  <nav class="rooms">
-    <a href="javascript:;" id="addition">Addition</a>
-    <a href="javascript:;" id="subtraction">Subtraction</a>
-    <a href="javascript:;" id="multiplication">Multiplication</a>
-  </nav>
-  
-  <input id="name" type="text"><button id="rename">Rename</button>
-  <br><br>
-  <span id="problem"></span>
-  <br></br>
-  <input id="answer" type="text"><button id="guess">Submit</button>
-  <br><br/>
-  <ul id="leaderboard"></ul>
+  <div class="container">
+    <div class="main column">
+      <nav class="rooms">
+        <a href="javascript:;" id="addition">Addition</a>
+        <a href="javascript:;" id="subtraction">Subtraction</a>
+        <a href="javascript:;" id="multiplication">Multiplication</a>
+      </nav>
+      <div class="problem">
+        <div class="question">
+          <div class="question_piece" id="problem_a"></div>
+          <div class="question_piece" id="problem_sign"></div>
+          <div class="question_piece" id="problem_b"></div>
+          <div class="question_piece" id="problem_equals">=</div>
+          <div class="question_piece" id="problem_answer">
+            <form id="answer">
+              <input type="text">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="people column">
+      <form id="rename">
+        <input type="text" placeholder="Your Nickname">
+      </form>
+      <ul id="leaderboard"></ul>
+    </div>
+  </div>
 </body>
 </html>
 

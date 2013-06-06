@@ -1,0 +1,181 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
+@import "reset.css";
+html {
+  height: 100%;
+  position: relative;
+  color: #fff;
+  background: #020031;
+  /* Old browsers */
+
+  background: -moz-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+  /* FF3.6+ */
+
+  background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #020031), color-stop(100%, #6d3353));
+  /* Chrome,Safari4+ */
+
+  background: -webkit-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+  /* Chrome10+,Safari5.1+ */
+
+  background: -o-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+  /* Opera 11.10+ */
+
+  background: -ms-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+  /* IE10+ */
+
+  background: linear-gradient(45deg, #020031 0%, #6d3353 100%);
+  /* W3C */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#020031', endColorstr='#6d3353', GradientType=1);
+  /* IE6-9 fallback on horizontal gradient */
+
+}
+body,
+input {
+  font-family: 'Open Sans', sans-serif;
+}
+*:focus {
+  outline: 0;
+}
+.rooms {
+  height: 40px;
+}
+.rooms a {
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #FFF;
+}
+.rooms a.current {
+  -webkit-border-top-right-radius: 8px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-radius-topright: 8px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 8px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  background: #000;
+}
+.container {
+  margin: 100px auto;
+  width: 950px;
+}
+.container .column {
+  float: left;
+}
+.problem {
+  background: #000;
+  height: 300px;
+  width: 700px;
+}
+.problem .question {
+  padding-top: 40px;
+}
+.problem .question_piece {
+  float: left;
+  text-align: center;
+  height: 200px;
+  line-height: 200px;
+  font-size: 120px;
+  font-weight: 300;
+}
+.problem #problem_a,
+.problem #problem_b {
+  width: 160px;
+}
+.problem #problem_sign,
+.problem #problem_equals {
+  width: 70px;
+  font-size: 50px;
+}
+.problem #problem_answer {
+  margin-left: 15px;
+  width: 200px;
+  border-bottom: 1px solid #FFF;
+}
+.problem #problem_answer input {
+  border: 0;
+  background: transparent;
+  font-weight: 300;
+  font-size: 120px;
+  height: 160px;
+  margin: 20px 0;
+  width: 200px;
+  line-height: 160px;
+  color: #FFF;
+  text-align: center;
+}
+.people {
+  width: 230px;
+  margin-left: 20px;
+}
+#rename {
+  height: 40px;
+  display: block;
+}
+#rename input {
+  color: #FFF;
+  font-weight: 500;
+  font-size: 16px;
+  width: 218px;
+  height: 30px;
+  margin: 0;
+  padding: 0 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 0;
+}
+#leaderboard {
+  background: #000;
+  height: 300px;
+}
+#leaderboard li {
+  padding: 0 8px;
+  height: 38px;
+  line-height: 38px;
+  border-bottom: 1px solid #222;
+}
+#leaderboard li .score {
+  float: right;
+}
+.notifyjs-corner div {
+  width: 120px;
+}
+.notifyjs-correct-base,
+.notifyjs-incorrect-base {
+  padding: 10px;
+  color: #FFF;
+  margin-bottom: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-topleft: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+.notifyjs-correct-base.notifyjs-correct-correct,
+.notifyjs-incorrect-base.notifyjs-correct-correct {
+  background: #478E43;
+}
+.notifyjs-correct-base.notifyjs-incorrect-incorrect,
+.notifyjs-incorrect-base.notifyjs-incorrect-incorrect {
+  background: #800;
+}

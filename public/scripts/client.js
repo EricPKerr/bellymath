@@ -2,6 +2,7 @@ var socket = io.connect('http://' + document.location.host);
 
 $(function(){
   $('.rooms a').click(function(){
+    if($(this).hasClass('current')) return;
     $('.rooms a').removeClass('current');
     $(this).addClass('current')
     var room = $(this).attr('id');
@@ -10,17 +11,27 @@ $(function(){
   
   $('.rooms a:eq(0)').trigger('click'); // Join first room (Addition)
   
-  $('#rename').click(function() {
-    var name = $('#name').val();
-    socket.emit('name', name);
+  $('#rename').submit(function(){
+    var name = $('#rename input').val();
+    socket.emit('name', name, function(){
+      $.cookie('name', name);
+    });
+    return false;
   });
   
-  $('#guess').click(function(){
-    $('#answer').focus();
-    var answer = $('#answer').val();
+  $('#answer').submit(function(){
+    $('#answer input').focus();
+    var answer = $('#answer input').val();
+    if(answer.length == 0) return false;
+    var current = previous_problem;
     socket.emit('answer', answer, function(correct){
-      console.log('CORRECT', correct);
+      $.notify(current.a + ' ' + current.sign + ' ' + current.b + (correct ? ' = ' : " isn't ") + answer, {
+        style: correct ? 'correct' : 'incorrect',
+        autoHideDelay: 4000,
+        className: correct ? 'correct' : 'incorrect'
+      });
     });
+    return false;
   });
   
   socket.on('connect', function(){
@@ -29,6 +40,10 @@ $(function(){
   
   socket.on('error', function(err){
     alert('error: ' + err);
+  });
+  
+  socket.on('identify', function(name){
+    $('#rename input').val(name);
   });
   
   var previous_problem, previous_leaderboard;
@@ -52,16 +67,27 @@ $(function(){
   socket.on('state', function(state){
     // Redraw problem if it changes
     if(!same_problem(state.problem, previous_problem)){
-      $('#problem').text(state.problem.a + ' ' + state.problem.sign + ' ' + state.problem.b);
-      $('#answer').val('').focus();
+      $('#problem_a').text(state.problem.a);
+      $('#problem_sign').text(state.problem.sign);
+      $('#problem_b').text(state.problem.b);
+      $('#answer input').val('').focus();
     }
     
     // Redraw leaderboard if it changes
     if(!same_leaderboard(state.leaderboard, previous_leaderboard)){
       $('#leaderboard').empty();
       $(state.leaderboard).each(function(i, member){
-        $('#leaderboard').append('<li ' + (member.id == socket.id ? 'class="you"' : '') + '>' + member.name + ' ' + member.score + '</li>');
+        $('#leaderboard').append('<li ' + (member.id == socket.id ? 'class="you"' : '') + '><span class="score">' + member.score + '</span>' + member.name + '</li>');
       });
     }
   });
 });
+
+$.notify.addStyle('correct', {
+  html: '<div><h3>Correct</h3><div data-notify-text /></div>'
+});
+
+$.notify.addStyle('incorrect', {
+  html: '<div><h3>Incorrect</h3><div data-notify-text /></div>'
+});
+
